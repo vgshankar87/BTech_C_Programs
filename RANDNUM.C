@@ -1,0 +1,11 @@
+#include<stdlib.h>
+#include<conio.h>
+#include<stdio.h>
+void main()
+{
+int i;
+clrscr();
+for(i=0;i<100;i++)
+printf("%d\t",(rand()%6)+1);
+getch();
+}

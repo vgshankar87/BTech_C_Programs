@@ -1,0 +1,38 @@
+#include<stdio.h>
+#include<conio.h>
+void main(void)
+{
+char str1[50]={"\n"},str2[50]={"\n"};
+char * c, * r;
+int i=0,j=0;
+c=str1;
+r=str2;
+clrscr();
+printf("Enter First string : ");
+for(i=0;i<50;i++)
+{
+scanf("%c",c+i);
+if(*(c+i)=='\n') break;
+}
+
+printf("Enter Second string : ");
+for(j=0;j<50;j++)
+{
+scanf("%c",r+j);
+if(*(r+j)=='\n') break;
+}
+
+for(j=0;*(r+j)!='\n';j++,i++)
+{
+*(c+i)=*(r+j);
+}
+*(c+i)='\n';
+
+for(i=0;*(c+i)!='\n';i++)
+{
+printf("%c",*(c+i));
+}
+
+getch();
+}
+

@@ -1,0 +1,235 @@
+#include<stdio.h>
+#include<conio.h>
+#include<dos.h>
+#include<math.h>
+
+#define STATUS 2,24
+
+struct player
+{
+	int active;
+	char name[35];
+	int position;
+	int throws;
+	int roles;
+	int x,y;
+	int status;
+	int coins;
+	int color;
+}p[4];
+
+struct   boxprop
+{
+	int displacement;
+}box[100];
+
+
+void createplayer(int);
+void evaluateposition(int pos);
+void gameover();
+void printplayerstatus(int pnum);
+int diceroll(int);
+void play(int);
+void drawsq();
+
+int nop,startx=2,starty=20,dicetype=0,finish=1;
+
+void main()
+{
+	int i;
+
+	clrscr();
+	textcolor(WHITE);
+	flushall();
+	cprintf("\nENTER THE NUMBER OF PLAYER : ");
+	cscanf("%d",&nop);
+	fflush(stdin);
+	createplayer(nop);
+	play(nop);
+
+  }
+
+void createplayer(int nop)
+{
+	int i,key=0,x,y,color,coin=3;
+	for(i=0;i<nop;i++)
+	{
+	   textcolor(WHITE);
+	   cprintf("\n\nENTER THE NAME OF PLAYER %d : ",i+1);
+	   cscanf("%s",&p[i].name);
+	   fflush(stdin);
+
+	   cprintf("\nPRESS RIGHT TO SELECT THE  COIN OR UP TO CHANGE THE COLOR : ");
+	   x=wherex(); y=wherey();
+	   p[i].status=1;
+
+	   color=abs(color%15)+1;
+	   coin=abs(coin%128);
+	   do
+	   {
+		key=bioskey(0);
+
+		if(key==19200)
+		{
+			gotoxy(x,y);
+			color=abs(color-1);
+			textcolor(color);
+			cprintf("%c",coin);
+		}
+
+
+		if(key==19712)
+		{
+			gotoxy(x,y);
+			color=abs(color+1);
+			textcolor(color);
+			cprintf("%c",coin);
+		}
+
+		if(key==18432)
+		{
+			gotoxy(x,y);
+			coin=abs(coin+1);
+			textcolor(color);
+			cprintf("%c",coin);
+		}
+
+		if(key==20480)
+		{
+			gotoxy(x,y);
+			coin=abs(coin-1);
+			textcolor(color);
+			cprintf("%c",coin);
+		}
+		if(key==7181)
+		{
+			p[i].coins=coin;
+			p[i].color=color;
+			p[i].x=startx+i;
+			p[i].y=starty;
+		}
+
+
+	   }while(key!=7181);
+	   clrscr();
+}
+}
+
+
+void play(int nop)
+{
+	int n,j;
+	int i=0,count=0;
+	textcolor(WHITE);
+	 //do
+	 // {
+	     while(count<nop)
+		if(p[i].status==1)
+		{
+			drawsq();
+			gotoxy(18,22);
+			textcolor(p[i].color);
+			cprintf("%s",p[i].name);
+
+			gotoxy(18,23);
+			textcolor(p[i].color);
+			cprintf("%d",p[i].roles);
+
+			gotoxy(STATUS);
+			textcolor(p[i].color+BLINK);
+			cprintf("<-------------------PRESS ANY KEY TO ROLE THE DICE------------------------->");
+			getch();
+
+			n=diceroll(dicetype);
+			if((p[i].position+=n)>=10)
+			p[i].status=0;
+
+			p[i].roles++;
+
+			gotoxy(STATUS);
+			textcolor(p[i].color);
+			cprintf("FACE OF DICE  : %d    <----PRESS ANY KEY TO MOVE THE COIN TO ITS POSITION--->",n+1);
+			getch();
+
+			p[i].throws++;
+			i++;
+			if(i>=nop)
+			i=0;
+
+		}
+		else
+		{
+		i++;
+		if(i>=nop)
+		i=0;
+		count++;
+		}
+
+//	  }while(1);
+}
+
+
+void evaluateposition(int pos)
+{
+
+}
+void gameover()
+{
+
+}
+
+
+
+
+
+void printplayerstatus(int pnum)
+{
+	int pos,x,y;
+	pos=p[pnum].position;
+	x=pos%10; y=pos/10;
+	gotoxy(startx,starty);
+	if(y%2!=0)
+	x=(10-x)-1;
+	gotoxy(p[pnum].x+x*5,p[pnum].y-y*2);
+	textcolor(p[pnum].color);
+	cprintf("%c",p[pnum].coins);
+
+}
+int diceroll(int type)
+{
+	int num;
+	struct dostime_t t;
+	_dos_gettime(&t);
+	num=rand()+t.hsecond;
+	num=num%10;
+	if(num==0||num>=7)
+	num=diceroll(1);
+	return num;
+
+}
+
+void drawsq()
+{
+	char line[81];
+	int i;
+	FILE *fptr;
+	clrscr();
+	fptr=fopen("CUBSNAK.txt","r");
+	textcolor(15);
+	while((fgets(line,80,fptr))!=NULL)
+	{
+	cprintf("%s",line);
+	cprintf("\r");
+	}
+	fclose(fptr);
+	for(i=0;i<nop;i++)
+	{
+		printplayerstatus(i);
+	}
+	getch();
+
+
+
+}
+
+

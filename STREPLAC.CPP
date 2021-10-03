@@ -1,0 +1,34 @@
+#include<stdio.h>
+#include<conio.h>
+#include<stdlib.h>
+
+char tword[45]="";
+struct ll *newnode, *start=NULL;
+
+struct ll
+{
+char * word;
+struct ll *next;
+};
+
+void main()
+{
+FILE *fptr;
+char word[45]="", ch='a';
+int ctr=0;
+clrscr();
+fptr=fopen("text.txt","r");
+while(ch!=EOF)
+{
+ch=fgetc(fptr);
+	if(ch==' '||ch=='\n'||ch==NULL||ch==EOF)
+	{
+	word[ctr]=NULL;
+	addword(word);
+	ctr=0;
+	word[0]=NULL;
+	}
+	else word[ctr++]=ch;
+}
+getch();
+}
